@@ -1,133 +1,68 @@
+
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>任务管理</title>
-<script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-database.js"></script>
-<script>
-  // Firebase 配置
-  var firebaseConfig = {
-    apiKey: "AIzaSyA0xY8xZPPWbmCm3bw1HyPoyww0aSqushc",
-  authDomain: "app-chanel-1ae0d.firebaseapp.com",
-  databaseURL: "https://app-chanel-1ae0d-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "app-chanel-1ae0d",
-  storageBucket: "app-chanel-1ae0d.appspot.com",
-  messagingSenderId: "1072191990888",
-  appId: "1:1072191990888:web:c0f6319b839b66890b9fdd",
-  measurementId: "G-30ZHW997QE"
-  };
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>信息更名</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
 
-  // 初始化 Firebase
-  firebase.initializeApp(firebaseConfig);
-  var database = firebase.database();
-
-  // 上传数据到 Firebase
-  function uploadData() {
-    var inputData = {
-      "project_id": document.getElementById("project_id").value,
-      "task_time": {
-        "start_time": {
-          "one": document.getElementById("start_time_one").value,
-          "two": document.getElementById("start_time_two").value,
-        },
-        "end_time": document.getElementById("end_time").value
-      },
-      "location": {
-        "simple_location": document.getElementById("simple_location").value,
-        "complex_location": document.getElementById("complex_location").value
-      },
-      "task_content": {
-        "brief_description": document.getElementById("brief_description").value,
-        "detailed_description": document.getElementById("detailed_description").value,
-        "other_description": document.getElementById("other_description").value
-      },
-      "task_economic_structure": {
-        "estimated_expenses": document.getElementById("estimated_expenses").value,
-        "regular_plan_expenses": document.getElementById("regular_plan_expenses").value,
-        "estimated_income": document.getElementById("estimated_income").value,
-        "total_amount": document.getElementById("total_amount").value,
-        "balance": document.getElementById("balance").value,
-        "phase_plan_balance": []
-      }
-    };
-    
-    var newPostKey = firebase.database().ref().child('tasks').push().key;
-    var updates = {};
-    updates['/tasks/' + newPostKey] = inputData;
-    return firebase.database().ref().update(updates);
-  }
-
-  // 读取数据并展示
-  function readData() {
-    var projectId = document.getElementById("read_project_id").value;
-    var taskRef = firebase.database().ref("tasks/" + projectId);
-    taskRef.once('value', function(snapshot) {
-      var taskData = snapshot.val();
-      document.getElementById("task_data").innerHTML = JSON.stringify(taskData, null, 4);
-    });
-  }
-</script>
+        .container {
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-  <div style="display: flex;">
-    <div style="flex: 1; padding: 20px;">
-      <h2>上传数据</h2>
-      <form onsubmit="return uploadData();">
-        <label for="project_id">项目ID：</label>
-        <input type="text" id="project_id" required><br><br>
-        
-        <label for="start_time_one">开始时间（默认）：</label>
-        <input type="text" id="start_time_one"><br><br>
-        
-        <label for="start_time_two">开始时间（指定）：</label>
-        <input type="text" id="start_time_two"><br><br>
-        
-        <label for="end_time">截止时间：</label>
-        <input type="text" id="end_time" required><br><br>
-        
-        <label for="simple_location">简单位置：</label>
-        <input type="text" id="simple_location"><br><br>
-        
-        <label for="complex_location">复杂位置：</label>
-        <input type="text" id="complex_location"><br><br>
-        
-        <label for="brief_description">简要描述：</label><br>
-        <textarea id="brief_description" rows="4" cols="50"></textarea><br><br>
-        
-        <label for="detailed_description">详细描述：</label><br>
-        <textarea id="detailed_description" rows="4" cols="50"></textarea><br><br>
-        
-        <label for="other_description">其他描述：</label><br>
-        <textarea id="other_description" rows="4" cols="50"></textarea><br><br>
-        
-        <label for="estimated_expenses">预估开销：</label>
-        <input type="text" id="estimated_expenses"><br><br>
-        
-        <label for="regular_plan_expenses">常规计划开销：</label>
-        <input type="text" id="regular_plan_expenses"><br><br>
-        
-        <label for="estimated_income">预估收入：</label>
-        <input type="text" id="estimated_income"><br><br>
-        
-        <label for="total_amount">总金额：</label>
-        <input type="text" id="total_amount"><br><br>
-        
-        <label for="balance">余额：</label>
-        <input type="text" id="balance"><br><br>
-        
-        <input type="submit" value="上传">
-      </form>
+    <div class="container">
+        <h2>信息更名</h2>
+        <input type="text" id="objectNameInput" placeholder="请输入名称">
+        <button onclick="renameObject()">重命名</button>
+        <button onclick="pasteClipboard()">粘贴</button>
+        <p id="result"></p>
+        <button onclick="copyToClipboard()">复制</button>
     </div>
-    
-    <div style="flex: 1; padding: 20px;">
-      <h2>读取数据</h2>
-      <label for="read_project_id">输入项目ID：</label>
-      <input type="text" id="read_project_id" required><br><br>
-      <button onclick="readData()">读取数据</button><br><br>
-      <pre id="task_data"></pre>
-    </div>
-  </div>
+
+    <script>
+        function renameObject() {
+            var objectName = document.getElementById('objectNameInput').value;
+            var info = {'姓名': '黄果', '班级': '装备2101', '学号': '2021030535', '手机号': '18830692031', '电话': '18830692031'};
+            var result = objectName;
+
+            for (var key in info) {
+                var pattern = new RegExp(key, 'g');
+                result = result.replace(pattern, info[key]);
+            }
+
+            document.getElementById('result').innerText = result;
+        }
+
+        function copyToClipboard() {
+            var resultText = document.getElementById('result');
+            var range = document.createRange();
+            range.selectNode(resultText);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            alert('已复制到剪贴板！');
+        }
+
+        function pasteClipboard() {
+            navigator.clipboard.readText()
+                .then(text => {
+                    document.getElementById('objectNameInput').value = text;
+                })
+                .catch(err => {
+                    console.error('Failed to read clipboard contents: ', err);
+                });
+        }
+    </script>
 </body>
 </html>
