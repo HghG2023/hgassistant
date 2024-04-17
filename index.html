@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>信息更名</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>信息更名</h2>
+        <input type="text" id="objectNameInput" placeholder="请输入名称">
+        <button onclick="renameObject()">重命名</button>
+        <button onclick="pasteClipboard()">粘贴</button>
+        <p id="result"></p>
+        <button onclick="copyToClipboard()">复制</button>
+    </div>
+
+    <script>
+        function renameObject() {
+            var objectName = document.getElementById('objectNameInput').value;
+            var info = {'姓名': '黄果', '班级': '装备2101', '学号': '2021030535', '手机号': '18830692031', '电话': '18830692031'};
+            var result = objectName;
+
+            for (var key in info) {
+                var pattern = new RegExp(key, 'g');
+                result = result.replace(pattern, info[key]);
+            }
+
+            document.getElementById('result').innerText = result;
+        }
+
+        function copyToClipboard() {
+            var resultText = document.getElementById('result');
+            var range = document.createRange();
+            range.selectNode(resultText);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            alert('已复制到剪贴板！');
+        }
+
+        function pasteClipboard() {
+            navigator.clipboard.readText()
+                .then(text => {
+                    document.getElementById('objectNameInput').value = text;
+                })
+                .catch(err => {
+                    console.error('Failed to read clipboard contents: ', err);
+                });
+        }
+    </script>
+</body>
+</html>
