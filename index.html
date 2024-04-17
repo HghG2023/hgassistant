@@ -3,45 +3,104 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Firebase Data Example</title>
+<title>Firebase Realtime Database Example</title>
 <!-- 引入 Firebase JavaScript SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.6.5/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.5/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.5/firebase-database.js"></script>
 <script>
   // 初始化 Firebase
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
-  };
+ const firebaseConfig = {
+  apiKey: "AIzaSyA0xY8xZPPWbmCm3bw1HyPoyww0aSqushc",
+  authDomain: "app-chanel-1ae0d.firebaseapp.com",
+  databaseURL: "https://app-chanel-1ae0d-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "app-chanel-1ae0d",
+  storageBucket: "app-chanel-1ae0d.appspot.com",
+  messagingSenderId: "1072191990888",
+  appId: "1:1072191990888:web:c0f6319b839b66890b9fdd",
+  measurementId: "G-30ZHW997QE"
+};
   firebase.initializeApp(firebaseConfig);
 
-  // 获取 Firestore 实例
-  const db = firebase.firestore();
+  // 获取 Realtime Database 引用
+  const database = firebase.database();
 
-  // 读取数据
-  db.collection("example_collection").get().then((querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-      console.log(`${doc.id} => ${doc.data()}`);
+  // 当用户点击保存按钮时，将用户输入的数据写入数据库
+  function onSaveButtonClick() {
+    const userId = document.getElementById("id").value;
+    const password = document.getElementById("password").value;
+    const name = document.getElementById("name").value;
+    const age = parseInt(document.getElementById("age").value);
+    const gender = document.getElementById("gender").value;
+    const phoneNumber = document.getElementById("phone_number").value;
+    const email = document.getElementById("email").value;
+
+    const userData = {
+      id: userId,
+      password: password,
+      name: name,
+      age: age,
+      gender: gender,
+      phone_number: phoneNumber,
+      email: email
+    };
+
+    database.ref('users/' + userId).set(userData)
+      .then(() => {
+        console.log("Data successfully written to Firebase!");
+      })
+      .catch((error) => {
+        console.error("Error writing data to Firebase: ", error);
+      });
+  }
+
+  // 当用户点击读取按钮时，从数据库读取用户数据
+  function onReadButtonClick() {
+    const userId = document.getElementById("read_id").value;
+
+    database.ref('users/' + userId).once('value').then((snapshot) => {
+      const userData = snapshot.val();
+      console.log("Data from Firebase:", userData);
     });
-  });
-
-  // 写入数据
-  db.collection("example_collection").doc("example_document").set({
-    data: "example_data"
-  })
-  .then(() => {
-    console.log("Document successfully written!");
-  })
-  .catch((error) => {
-    console.error("Error writing document: ", error);
-  });
+  }
 </script>
 </head>
 <body>
-<h1>Firebase Data Example</h1>
+<h1>Firebase Realtime Database Example</h1>
+<!-- 保存数据表单 -->
+<h2>Save Data</h2>
+<form onsubmit="event.preventDefault(); onSaveButtonClick()">
+  <label for="id">ID:</label>
+  <input type="text" id="id" name="id" required><br><br>
+
+  <label for="password">Password:</label>
+  <input type="password" id="password" name="password" required><br><br>
+
+  <label for="name">Name:</label>
+  <input type="text" id="name" name="name" required><br><br>
+
+  <label for="age">Age:</label>
+  <input type="number" id="age" name="age" required><br><br>
+
+  <label for="gender">Gender:</label>
+  <select id="gender" name="gender" required>
+    <option value="male">Male</option>
+    <option value="female">Female</option>
+    <option value="other">Other</option>
+  </select><br><br>
+
+  <label for="phone_number">Phone Number:</label>
+  <input type="text" id="phone_number" name="phone_number" required><br><br>
+
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" required><br><br>
+
+  <button type="submit">Save Data</button>
+</form>
+
+<!-- 读取数据表单 -->
+<h2>Read Data</h2>
+<label for="read_id">Enter ID to Read Data:</label>
+<input type="text" id="read_id" name="read_id" required><br><br>
+<button onclick="onReadButtonClick()">Read Data</button>
 </body>
 </html>
