@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Password Protected Page</title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  h2 {
+    font-size: 24px;
+    text-align: center;
+  }
+  form {
+    text-align: center;
+  }
+  input[type="password"] {
+    padding: 8px;
+    font-size: 18px;
+  }
+  button {
+    padding: 8px 16px;
+    font-size: 18px;
+  }
+</style>
+</head>
+<body>
+<div>
+  <h2>Please Enter the Password</h2>
+  <form action="verify.php" method="post">
+    <input type="password" name="password" placeholder="Password">
+    <button type="submit">Submit</button>
+  </form>
+</div>
+</body>
+</html>
