@@ -9,7 +9,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.6.5/firebase-database.js"></script>
 <script>
   // 初始化 Firebase
- const firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyA0xY8xZPPWbmCm3bw1HyPoyww0aSqushc",
   authDomain: "app-chanel-1ae0d.firebaseapp.com",
   databaseURL: "https://app-chanel-1ae0d-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -47,9 +47,11 @@
     database.ref('users/' + userId).set(userData)
       .then(() => {
         console.log("Data successfully written to Firebase!");
+        alert("Data saved successfully!");
       })
       .catch((error) => {
         console.error("Error writing data to Firebase: ", error);
+        alert("Failed to save data. Please try again.");
       });
   }
 
@@ -60,47 +62,57 @@
     database.ref('users/' + userId).once('value').then((snapshot) => {
       const userData = snapshot.val();
       console.log("Data from Firebase:", userData);
+      document.getElementById("display_data").innerText = JSON.stringify(userData, null, 2);
     });
   }
 </script>
 </head>
 <body>
 <h1>Firebase Realtime Database Example</h1>
-<!-- 保存数据表单 -->
-<h2>Save Data</h2>
-<form onsubmit="event.preventDefault(); onSaveButtonClick()">
-  <label for="id">ID:</label>
-  <input type="text" id="id" name="id" required><br><br>
+<div style="display: flex;">
+  <!-- 保存数据区域 -->
+  <div style="width: 50%; margin-right: 20px;">
+    <h2>Save Data</h2>
+    <form onsubmit="event.preventDefault(); onSaveButtonClick()">
+      <label for="id">ID:</label>
+      <input type="text" id="id" name="id" required><br><br>
 
-  <label for="password">Password:</label>
-  <input type="password" id="password" name="password" required><br><br>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required><br><br>
 
-  <label for="name">Name:</label>
-  <input type="text" id="name" name="name" required><br><br>
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" required><br><br>
 
-  <label for="age">Age:</label>
-  <input type="number" id="age" name="age" required><br><br>
+      <label for="age">Age:</label>
+      <input type="number" id="age" name="age" required><br><br>
 
-  <label for="gender">Gender:</label>
-  <select id="gender" name="gender" required>
-    <option value="male">Male</option>
-    <option value="female">Female</option>
-    <option value="other">Other</option>
-  </select><br><br>
+      <label for="gender">Gender:</label>
+      <select id="gender" name="gender" required>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select><br><br>
 
-  <label for="phone_number">Phone Number:</label>
-  <input type="text" id="phone_number" name="phone_number" required><br><br>
+      <label for="phone_number">Phone Number:</label>
+      <input type="text" id="phone_number" name="phone_number" required><br><br>
 
-  <label for="email">Email:</label>
-  <input type="email" id="email" name="email" required><br><br>
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required><br><br>
 
-  <button type="submit">Save Data</button>
-</form>
+      <button type="submit">Save Data</button>
+    </form>
+  </div>
 
-<!-- 读取数据表单 -->
-<h2>Read Data</h2>
-<label for="read_id">Enter ID to Read Data:</label>
-<input type="text" id="read_id" name="read_id" required><br><br>
-<button onclick="onReadButtonClick()">Read Data</button>
+  <!-- 读取数据区域 -->
+  <div style="width: 50%;">
+    <h2>Read Data</h2>
+    <label for="read_id">Enter ID to Read Data:</label>
+    <input type="text" id="read_id" name="read_id" required><br><br>
+    <button onclick="onReadButtonClick()">Read Data</button>
+
+    <h3>Display Data:</h3>
+    <pre id="display_data"></pre>
+  </div>
+</div>
 </body>
 </html>
