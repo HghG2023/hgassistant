@@ -1,24 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Firebase Realtime Database Example</title>
+<title>任务管理系统</title>
 <!-- 引入 Firebase JavaScript SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.6.5/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.5/firebase-database.js"></script>
 <script>
   // 初始化 Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyA0xY8xZPPWbmCm3bw1HyPoyww0aSqushc",
-  authDomain: "app-chanel-1ae0d.firebaseapp.com",
-  databaseURL: "https://app-chanel-1ae0d-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "app-chanel-1ae0d",
-  storageBucket: "app-chanel-1ae0d.appspot.com",
-  messagingSenderId: "1072191990888",
-  appId: "1:1072191990888:web:c0f6319b839b66890b9fdd",
-  measurementId: "G-30ZHW997QE"
-};
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    databaseURL: "YOUR_DATABASE_URL",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
   firebase.initializeApp(firebaseConfig);
 
   // 获取 Realtime Database 引用
@@ -26,93 +25,79 @@ const firebaseConfig = {
 
   // 当用户点击保存按钮时，将用户输入的数据写入数据库
   function onSaveButtonClick() {
-    const userId = document.getElementById("id").value;
-    const password = document.getElementById("password").value;
-    const name = document.getElementById("name").value;
-    const age = parseInt(document.getElementById("age").value);
-    const gender = document.getElementById("gender").value;
-    const phoneNumber = document.getElementById("phone_number").value;
-    const email = document.getElementById("email").value;
-
-    const userData = {
-      id: userId,
-      password: password,
-      name: name,
-      age: age,
-      gender: gender,
-      phone_number: phoneNumber,
-      email: email
+    const taskTime = {
+      start_time: {
+        one: "默认当前时间开始",
+        two: "从未来某时间点开始"
+      },
+      end_time: document.getElementById("end_time").value
+    };
+    const location = {
+      simple_location: document.getElementById("simple_location").value,
+      complex_location: document.getElementById("complex_location").value
+    };
+    const taskContent = {
+      brief_description: document.getElementById("brief_description").value,
+      detailed_description: document.getElementById("detailed_description").value,
+      other_description: document.getElementById("other_description").value
+    };
+    const taskEconomicStructure = {
+      estimated_expenses: document.getElementById("estimated_expenses").value,
+      regular_plan_expenses: document.getElementById("regular_plan_expenses").value,
+      estimated_income: document.getElementById("estimated_income").value,
+      total_amount: document.getElementById("total_amount").value,
+      balance: document.getElementById("balance").value,
+      phase_plan_balance: document.getElementById("phase_plan_balance").value.split(",")
     };
 
-    database.ref('users/' + userId).set(userData)
+    const taskData = {
+      task_time: taskTime,
+      location: location,
+      task_content: taskContent,
+      task_economic_structure: taskEconomicStructure
+    };
+
+    database.ref('tasks/').push(taskData)
       .then(() => {
-        console.log("Data successfully written to Firebase!");
-        alert("Data saved successfully!");
+        console.log("数据成功写入 Firebase!");
+        alert("任务保存成功!");
       })
       .catch((error) => {
-        console.error("Error writing data to Firebase: ", error);
-        alert("Failed to save data. Please try again.");
+        console.error("写入数据到 Firebase 出错: ", error);
+        alert("保存任务失败。请重试。");
       });
   }
 
-  // 当用户点击读取按钮时，从数据库读取用户数据
+  // 当用户点击读取按钮时，从数据库读取任务数据
   function onReadButtonClick() {
-    const userId = document.getElementById("read_id").value;
-
-    database.ref('users/' + userId).once('value').then((snapshot) => {
-      const userData = snapshot.val();
-      console.log("Data from Firebase:", userData);
-      document.getElementById("display_data").innerText = JSON.stringify(userData, null, 2);
+    database.ref('tasks/').once('value').then((snapshot) => {
+      const tasksData = snapshot.val();
+      console.log("从 Firebase 读取的任务数据:", tasksData);
+      document.getElementById("display_data").innerText = JSON.stringify(tasksData, null, 2);
     });
   }
 </script>
 </head>
 <body>
-<h1>Firebase Realtime Database Example</h1>
-<div style="display: flex;">
-  <!-- 保存数据区域 -->
-  <div style="width: 50%; margin-right: 20px;">
-    <h2>Save Data</h2>
-    <form onsubmit="event.preventDefault(); onSaveButtonClick()">
-      <label for="id">ID:</label>
-      <input type="text" id="id" name="id" required><br><br>
+<h1>任务管理系统</h1>
 
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required><br><br>
-
-      <label for="name">Name:</label>
-      <input type="text" id="name" name="name" required><br><br>
-
-      <label for="age">Age:</label>
-      <input type="number" id="age" name="age" required><br><br>
-
-      <label for="gender">Gender:</label>
-      <select id="gender" name="gender" required>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-        <option value="other">Other</option>
-      </select><br><br>
-
-      <label for="phone_number">Phone Number:</label>
-      <input type="text" id="phone_number" name="phone_number" required><br><br>
-
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required><br><br>
-
-      <button type="submit">Save Data</button>
-    </form>
-  </div>
-
-  <!-- 读取数据区域 -->
-  <div style="width: 50%;">
-    <h2>Read Data</h2>
-    <label for="read_id">Enter ID to Read Data:</label>
-    <input type="text" id="read_id" name="read_id" required><br><br>
-    <button onclick="onReadButtonClick()">Read Data</button>
-
-    <h3>Display Data:</h3>
-    <pre id="display_data"></pre>
-  </div>
+<!-- 左侧保存任务数据区域 -->
+<div style="float: left; width: 50%;">
+  <h2>保存任务数据</h2>
+  <form onsubmit="event.preventDefault(); onSaveButtonClick()">
+    <!-- 输入表单 -->
+  </form>
 </div>
+
+<!-- 右侧读取任务数据区域 -->
+<div style="float: right; width: 50%;">
+  <h2>读取任务数据</h2>
+  <button onclick="onReadButtonClick()">读取任务数据</button>
+
+  <!-- 显示读取的任务数据 -->
+  <h3>显示任务数据:</h3>
+  <pre id="display_data"></pre>
+</div>
+
 </body>
 </html>
