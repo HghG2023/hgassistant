@@ -9,7 +9,7 @@ if(isset($_POST['password'])) {
     // 验证密码是否正确
     if($password === $correct_password) {
         // 密码正确，重定向到受保护页面
-        header("Location: url1.php");
+        header("Location: rename.php");
         exit;
     } else {
         // 密码错误，返回到密码输入页面
