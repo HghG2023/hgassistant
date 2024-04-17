@@ -3,40 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Password Protected Page</title>
-<style>
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    font-family: Arial, sans-serif;
-  }
-  h2 {
-    font-size: 24px;
-    text-align: center;
-  }
-  form {
-    text-align: center;
-  }
-  input[type="password"] {
-    padding: 8px;
-    font-size: 18px;
-  }
-  button {
-    padding: 8px 16px;
-    font-size: 18px;
-  }
-</style>
+<title>Firebase Data Example</title>
+<!-- 引入 Firebase JavaScript SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.6.5/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.5/firebase-firestore.js"></script>
+<script>
+  // 初始化 Firebase
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+  firebase.initializeApp(firebaseConfig);
+
+  // 获取 Firestore 实例
+  const db = firebase.firestore();
+
+  // 读取数据
+  db.collection("example_collection").get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+      console.log(`${doc.id} => ${doc.data()}`);
+    });
+  });
+
+  // 写入数据
+  db.collection("example_collection").doc("example_document").set({
+    data: "example_data"
+  })
+  .then(() => {
+    console.log("Document successfully written!");
+  })
+  .catch((error) => {
+    console.error("Error writing document: ", error);
+  });
+</script>
 </head>
 <body>
-<div>
-  <h2>Please Enter the Password</h2>
-  <form action="verify.php" method="post">
-    <input type="password" name="password" placeholder="Password">
-    <button type="submit">Submit</button>
-  </form>
-</div>
+<h1>Firebase Data Example</h1>
 </body>
 </html>
