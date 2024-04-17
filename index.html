@@ -3,101 +3,131 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>任务管理系统</title>
-<!-- 引入 Firebase JavaScript SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.6.5/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.5/firebase-database.js"></script>
+<title>任务管理</title>
+<script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-database.js"></script>
 <script>
-  // 初始化 Firebase
-  const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    databaseURL: "YOUR_DATABASE_URL",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  // Firebase 配置
+  var firebaseConfig = {
+    apiKey: "AIzaSyA0xY8xZPPWbmCm3bw1HyPoyww0aSqushc",
+  authDomain: "app-chanel-1ae0d.firebaseapp.com",
+  databaseURL: "https://app-chanel-1ae0d-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "app-chanel-1ae0d",
+  storageBucket: "app-chanel-1ae0d.appspot.com",
+  messagingSenderId: "1072191990888",
+  appId: "1:1072191990888:web:c0f6319b839b66890b9fdd",
+  measurementId: "G-30ZHW997QE"
   };
+
+  // 初始化 Firebase
   firebase.initializeApp(firebaseConfig);
+  var database = firebase.database();
 
-  // 获取 Realtime Database 引用
-  const database = firebase.database();
-
-  // 当用户点击保存按钮时，将用户输入的数据写入数据库
-  function onSaveButtonClick() {
-    const taskTime = {
-      start_time: {
-        one: "默认当前时间开始",
-        two: "从未来某时间点开始"
+  // 上传数据到 Firebase
+  function uploadData() {
+    var inputData = {
+      "project_id": document.getElementById("project_id").value,
+      "task_time": {
+        "start_time": {
+          "one": document.getElementById("start_time_one").value,
+          "two": document.getElementById("start_time_two").value,
+        },
+        "end_time": document.getElementById("end_time").value
       },
-      end_time: document.getElementById("end_time").value
+      "location": {
+        "simple_location": document.getElementById("simple_location").value,
+        "complex_location": document.getElementById("complex_location").value
+      },
+      "task_content": {
+        "brief_description": document.getElementById("brief_description").value,
+        "detailed_description": document.getElementById("detailed_description").value,
+        "other_description": document.getElementById("other_description").value
+      },
+      "task_economic_structure": {
+        "estimated_expenses": document.getElementById("estimated_expenses").value,
+        "regular_plan_expenses": document.getElementById("regular_plan_expenses").value,
+        "estimated_income": document.getElementById("estimated_income").value,
+        "total_amount": document.getElementById("total_amount").value,
+        "balance": document.getElementById("balance").value,
+        "phase_plan_balance": []
+      }
     };
-    const location = {
-      simple_location: document.getElementById("simple_location").value,
-      complex_location: document.getElementById("complex_location").value
-    };
-    const taskContent = {
-      brief_description: document.getElementById("brief_description").value,
-      detailed_description: document.getElementById("detailed_description").value,
-      other_description: document.getElementById("other_description").value
-    };
-    const taskEconomicStructure = {
-      estimated_expenses: document.getElementById("estimated_expenses").value,
-      regular_plan_expenses: document.getElementById("regular_plan_expenses").value,
-      estimated_income: document.getElementById("estimated_income").value,
-      total_amount: document.getElementById("total_amount").value,
-      balance: document.getElementById("balance").value,
-      phase_plan_balance: document.getElementById("phase_plan_balance").value.split(",")
-    };
-
-    const taskData = {
-      task_time: taskTime,
-      location: location,
-      task_content: taskContent,
-      task_economic_structure: taskEconomicStructure
-    };
-
-    database.ref('tasks/').push(taskData)
-      .then(() => {
-        console.log("数据成功写入 Firebase!");
-        alert("任务保存成功!");
-      })
-      .catch((error) => {
-        console.error("写入数据到 Firebase 出错: ", error);
-        alert("保存任务失败。请重试。");
-      });
+    
+    var newPostKey = firebase.database().ref().child('tasks').push().key;
+    var updates = {};
+    updates['/tasks/' + newPostKey] = inputData;
+    return firebase.database().ref().update(updates);
   }
 
-  // 当用户点击读取按钮时，从数据库读取任务数据
-  function onReadButtonClick() {
-    database.ref('tasks/').once('value').then((snapshot) => {
-      const tasksData = snapshot.val();
-      console.log("从 Firebase 读取的任务数据:", tasksData);
-      document.getElementById("display_data").innerText = JSON.stringify(tasksData, null, 2);
+  // 读取数据并展示
+  function readData() {
+    var projectId = document.getElementById("read_project_id").value;
+    var taskRef = firebase.database().ref("tasks/" + projectId);
+    taskRef.once('value', function(snapshot) {
+      var taskData = snapshot.val();
+      document.getElementById("task_data").innerHTML = JSON.stringify(taskData, null, 4);
     });
   }
 </script>
 </head>
 <body>
-<h1>任务管理系统</h1>
-
-<!-- 左侧保存任务数据区域 -->
-<div style="float: left; width: 50%;">
-  <h2>保存任务数据</h2>
-  <form onsubmit="event.preventDefault(); onSaveButtonClick()">
-    <!-- 输入表单 -->
-  </form>
-</div>
-
-<!-- 右侧读取任务数据区域 -->
-<div style="float: right; width: 50%;">
-  <h2>读取任务数据</h2>
-  <button onclick="onReadButtonClick()">读取任务数据</button>
-
-  <!-- 显示读取的任务数据 -->
-  <h3>显示任务数据:</h3>
-  <pre id="display_data"></pre>
-</div>
-
+  <div style="display: flex;">
+    <div style="flex: 1; padding: 20px;">
+      <h2>上传数据</h2>
+      <form onsubmit="return uploadData();">
+        <label for="project_id">项目ID：</label>
+        <input type="text" id="project_id" required><br><br>
+        
+        <label for="start_time_one">开始时间（默认）：</label>
+        <input type="text" id="start_time_one"><br><br>
+        
+        <label for="start_time_two">开始时间（指定）：</label>
+        <input type="text" id="start_time_two"><br><br>
+        
+        <label for="end_time">截止时间：</label>
+        <input type="text" id="end_time" required><br><br>
+        
+        <label for="simple_location">简单位置：</label>
+        <input type="text" id="simple_location"><br><br>
+        
+        <label for="complex_location">复杂位置：</label>
+        <input type="text" id="complex_location"><br><br>
+        
+        <label for="brief_description">简要描述：</label><br>
+        <textarea id="brief_description" rows="4" cols="50"></textarea><br><br>
+        
+        <label for="detailed_description">详细描述：</label><br>
+        <textarea id="detailed_description" rows="4" cols="50"></textarea><br><br>
+        
+        <label for="other_description">其他描述：</label><br>
+        <textarea id="other_description" rows="4" cols="50"></textarea><br><br>
+        
+        <label for="estimated_expenses">预估开销：</label>
+        <input type="text" id="estimated_expenses"><br><br>
+        
+        <label for="regular_plan_expenses">常规计划开销：</label>
+        <input type="text" id="regular_plan_expenses"><br><br>
+        
+        <label for="estimated_income">预估收入：</label>
+        <input type="text" id="estimated_income"><br><br>
+        
+        <label for="total_amount">总金额：</label>
+        <input type="text" id="total_amount"><br><br>
+        
+        <label for="balance">余额：</label>
+        <input type="text" id="balance"><br><br>
+        
+        <input type="submit" value="上传">
+      </form>
+    </div>
+    
+    <div style="flex: 1; padding: 20px;">
+      <h2>读取数据</h2>
+      <label for="read_project_id">输入项目ID：</label>
+      <input type="text" id="read_project_id" required><br><br>
+      <button onclick="readData()">读取数据</button><br><br>
+      <pre id="task_data"></pre>
+    </div>
+  </div>
 </body>
 </html>
