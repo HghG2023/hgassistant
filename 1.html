@@ -14,18 +14,18 @@
     <script>
         // 定义一个字典，存储输入和对应的网页链接
         var dataDict = {
-            "最萌最傻三剑客": "https://www.example.com/a",
-            "b": "https://www.example.com/b",
+            "最萌最傻三剑客": "https://hghg2023.github.io/hgassistant/sjk.html",
+            "改名": "https://hghg2023.github.io/hgassistant/rename.html",
             // 在这里添加更多的键值对
         };
 
         function searchAndRedirect() {
-            var input = document.getElementById("queryInput").value.toLowerCase(); // 获取输入并转换为小写
+            var input = document.getElementById("queryInput"); // 获取输入并转换为小写
             var url = dataDict[input];
             if (url) {
                 window.location.href = url; // 如果找到对应的链接，则跳转
             } else {
-                alert("未找到相关网页链接"); // 如果未找到，则提示用户
+                alert("不存在！"); // 如果未找到，则提示用户
             }
         }
     </script>
